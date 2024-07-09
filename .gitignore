@@ -1,0 +1,9 @@
+/CMakeCache.txt
+/CMakeFiles/
+/Makefile
+/bench_tpcc
+/bench_ycsb
+/cmake_install.cmake
+/compile_commands.json
+/libcommon.a
+
