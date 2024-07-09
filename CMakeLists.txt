@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 project(star)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -Wall -Wno-long-long -Wno-unused-variable -fno-omit-frame-pointer -Wno-variadic-macros -pedantic  -O3 -DNDEBUG -g3")
 set(CMAKE_CXX_STANDARD 14)
 # -O3 -DNDEBUG
@@ -30,7 +31,7 @@ if(APPLE)
     find_package(gflags REQUIRED)
     target_link_libraries(common ${jemalloc_lib} glog::glog gflags)
 else()
-    target_link_libraries(common ${jemalloc_lib} glog gflags)
+    target_link_libraries(common ${jemalloc_lib} glog.a gflags.a)
 endif()
 
 add_executable(bench_tpcc bench_tpcc.cpp)
