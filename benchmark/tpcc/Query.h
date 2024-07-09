@@ -41,9 +41,7 @@ int32_t id_to_granule_id(int32_t ID, const Context &context) {
 }
 
 struct NewOrderQuery {
-  bool isRemote() {
-    return num_parts == 2;
-  }
+  bool isRemote() { return num_parts == 2; }
 
   int32_t W_ID;
   int32_t D_ID;
@@ -78,9 +76,7 @@ struct NewOrderQuery {
     return granules[i][j];
   }
 
-  int number_of_parts() {
-    return num_parts;
-  }
+  int number_of_parts() { return num_parts; }
 };
 
 class makeNewOrderQuery {
@@ -110,7 +106,9 @@ public:
 
     query.O_OL_CNT = random.uniform_dist(5, 15);
 
-    int rbk = random.uniform_dist(1, 100);
+    // WARN: disable rollback
+    // int rbk = random.uniform_dist(1, 100);
+    int rbk = 0;
 
     for (auto i = 0; i < query.O_OL_CNT; i++) {
 
@@ -153,16 +151,18 @@ public:
           query.parts[0] = OL_SUPPLY_W_ID - 1;
           query.parts[1] = W_ID - 1;
           DCHECK(query.part_granule_count[1] == 0);
-          query.granules[1][query.part_granule_count[1]++] = wid_to_granule_id(W_ID, context);
+          query.granules[1][query.part_granule_count[1]++] =
+              wid_to_granule_id(W_ID, context);
           part_idx = 0;
         } else {
           query.INFO[i].OL_SUPPLY_W_ID = W_ID;
-          query.granules[0][query.part_granule_count[0]++] = wid_to_granule_id(W_ID, context);
+          query.granules[0][query.part_granule_count[0]++] =
+              wid_to_granule_id(W_ID, context);
           part_idx = 0;
         }
       } else {
         query.INFO[i].OL_SUPPLY_W_ID = W_ID;
-        part_idx = query.num_parts == 2 ? 1: 0;
+        part_idx = query.num_parts == 2 ? 1 : 0;
       }
 
       query.INFO[i].OL_QUANTITY = random.uniform_dist(1, 10);
@@ -181,7 +181,7 @@ public:
       }
     }
 
-    int part_idx = query.num_parts == 2 ? 1: 0;
+    int part_idx = query.num_parts == 2 ? 1 : 0;
     auto g = did_to_granule_id(query.D_ID, context);
     bool exist = false;
 
@@ -227,9 +227,7 @@ struct PaymentQuery {
     return granules[i][j];
   }
 
-  int number_of_parts() {
-    return num_parts;
-  }
+  int number_of_parts() { return num_parts; }
 };
 
 class makePaymentQuery {
@@ -250,9 +248,12 @@ public:
 
     query.D_ID = random.uniform_dist(1, 10);
 
-    query.granules[0][query.part_granule_count[0]++] = did_to_granule_id(query.D_ID, context);
-    if (query.granules[0][query.part_granule_count[0] - 1] != wid_to_granule_id(query.W_ID, context))
-      query.granules[0][query.part_granule_count[0]++] = wid_to_granule_id(query.W_ID, context);
+    query.granules[0][query.part_granule_count[0]++] =
+        did_to_granule_id(query.D_ID, context);
+    if (query.granules[0][query.part_granule_count[0] - 1] !=
+        wid_to_granule_id(query.W_ID, context))
+      query.granules[0][query.part_granule_count[0]++] =
+          wid_to_granule_id(query.W_ID, context);
     // the customer resident warehouse is the home warehouse 85% of the time
     // and is a randomly selected remote warehouse 15% of the time.
 
@@ -278,7 +279,8 @@ public:
       query.num_parts = 2;
       query.C_W_ID = C_W_ID;
       query.C_D_ID = random.uniform_dist(1, 10);
-      query.granules[1][query.part_granule_count[1]++] = did_to_granule_id(query.C_D_ID, context);
+      query.granules[1][query.part_granule_count[1]++] =
+          did_to_granule_id(query.C_D_ID, context);
     } else {
       // If x > 15 a customer is selected from the selected district number
       // (C_D_ID = D_ID) and the home warehouse number (C_W_ID = W_ID).
@@ -292,6 +294,8 @@ public:
     // The customer is randomly selected 60% of the time by last name (C_W_ID ,
     // C_D_ID, C_LAST) and 40% of the time by number (C_W_ID , C_D_ID , C_ID).
 
+    // WARN: disable lastname lookup
+    /*
     if (y <= 60) {
       // If y <= 60 a customer last name (C_LAST) is generated according to
       // Clause 4.3.2.3 from a non-uniform random value using the
@@ -302,10 +306,11 @@ public:
       query.C_LAST.assign(last_name);
       query.C_ID = 0;
     } else {
-      // If y > 60 a non-uniform random customer number (C_ID) is selected using
-      // the NURand(1023,1,3000) function.
-      query.C_ID = random.non_uniform_distribution(1023, 1, 3000);
-    }
+    */
+    // If y > 60 a non-uniform random customer number (C_ID) is selected using
+    // the NURand(1023,1,3000) function.
+    query.C_ID = random.non_uniform_distribution(1023, 1, 3000);
+    // }
 
     // The payment amount (H_AMOUNT) is randomly selected within [1.00 ..
     // 5,000.00].
